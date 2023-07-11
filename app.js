@@ -1,10 +1,10 @@
 class BaseDeDatos{
     constructor(){
         this.productos = [];
-        this.agregarRegistro(1, "biblioteca" , 100, "alimentos", "biblioteca.jpg");
-        this.agregarRegistro(2, "colchon" , 50, "alimentos", "colchon.jpg");
-        this.agregarRegistro(3, "pileta" , 150, "alimentos", "pileta.jpg");
-        this.agregarRegistro(4, "ventilador" , 150, "alimentos", "ventilador.jpg");
+        this.agregarRegistro(1, "biblioteca" , 500, "alimentos", "biblioteca.jpg");
+        this.agregarRegistro(2, "colchon" , 1400, "alimentos", "colchon.jpg");
+        this.agregarRegistro(3, "pileta" , 9000, "alimentos", "pileta.jpg");
+        this.agregarRegistro(4, "ventilador" , 350, "alimentos", "ventilador.jpg");
     }
     
     agregarRegistro(id, nombre, precio, categoria, imagen){
@@ -31,9 +31,11 @@ class Producto {
 
 class Carrito{
     constructor(){
-        this.carrito = [];
+        const carritoStorage = JSON.parse(localStorage.getItem("carrito"))
+        this.carrito = carritoStorage || [];
         this.total = 0;
         this.totalProductos = 0;
+        this.listar();
     }
     estaEnCarrito({ id }){
         return this.carrito.find((producto) => producto.id === id)
@@ -44,6 +46,7 @@ class Carrito{
             productoEnCarrito.cantidad++;
         }else {
             this.carrito.push({ ...producto, cantidad: 1 })
+            localStorage.setItem("carrito", JSON.stringify(this.carrito))
         }
         this.listar();
     }
@@ -55,6 +58,7 @@ class Carrito{
         } else { 
             this.carrito.splice(indice, 1);
         }
+        localStorage.setItem("carrito", JSON.stringify(this.carrito))
         this.listar();
     }
 
