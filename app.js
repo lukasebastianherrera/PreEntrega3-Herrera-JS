@@ -1,10 +1,10 @@
 class BaseDeDatos{
     constructor(){
         this.productos = [];
-        this.agregarRegistro(1, "arroz" , 100, "alimentos", "arroz.jpg");
-        this.agregarRegistro(2, "fideos" , 50, "alimentos", "fideos.jpg");
-        this.agregarRegistro(3, "alfajor" , 150, "alimentos", "alfajor.jpg");
-        this.agregarRegistro(4, "pan" , 150, "alimentos", "pan.jpg");
+        this.agregarRegistro(1, "biblioteca" , 100, "alimentos", "biblioteca.jpg");
+        this.agregarRegistro(2, "colchon" , 50, "alimentos", "colchon.jpg");
+        this.agregarRegistro(3, "pileta" , 150, "alimentos", "pileta.jpg");
+        this.agregarRegistro(4, "ventilador" , 150, "alimentos", "ventilador.jpg");
     }
     
     agregarRegistro(id, nombre, precio, categoria, imagen){
@@ -39,15 +39,28 @@ class Carrito{
         return this.carrito.find((producto) => producto.id === id)
     }
     agregar(producto){
-        let productoEnCarrito = this.estaEnCarrito(producto);
+        const productoEnCarrito = this.estaEnCarrito(producto);
         if(productoEnCarrito){
             productoEnCarrito.cantidad++;
         }else {
-            this.carrito.push({...producto, cantidad : 1 })
+            this.carrito.push({ ...producto, cantidad: 1 })
         }
         this.listar();
     }
+
+    quitar(id){
+        const indice =  this.carrito.findIndex((producto) => producto.id === id);
+        if(this.carrito[indice].cantidad > 1){
+            this.carrito[indice].cantidad--;
+        } else { 
+            this.carrito.splice(indice, 1);
+        }
+        this.listar();
+    }
+
     listar(){
+        this.total = 0;
+        this.totalProductos = 0;
         divCarrito.innerHTML = "";
         for (const producto of this.carrito){
             divCarrito.innerHTML += `
@@ -55,9 +68,22 @@ class Carrito{
                 <h2>${producto.nombre}</h2>
                 <p>$${producto.precio}</p>
                 <p>Cantidad${producto.cantidad}</p>
-                <a href="#" class="btnQuitar">Quitar del carrito</a>
+                <a href="#" data-id="${producto.id}" class="btnQuitar">Quitar del carrito</a>
             </div>`
+            this.total += (producto.precio * producto.cantidad);
+            this.producto += producto.cantidad;
         }
+        const botonesQuitar = document.querySelectorAll(".btnQuitar");
+        for (const boton of botonesQuitar){
+            boton.onclick = (event) =>{
+                event.preventDefault();
+                this.quitar(Number(boton.dataset.id));
+
+            }
+        }
+        spanTotalCarrito.innerText = this.total
+        spanCantidadProductos.innerText = this.totalProductos;
+
     }
 }
 
@@ -65,6 +91,8 @@ const bd = new BaseDeDatos();
 
 const divProductos = document.querySelector("#productos");
 const divCarrito = document.querySelector("#carrito")
+const spanCantidadProductos = document.querySelector("#cantidadProductos")
+const spanTotalCarrito = document.querySelector("#totalCarrito")
 
 cargarProductos();
 
